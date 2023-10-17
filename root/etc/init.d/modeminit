@@ -1,0 +1,65 @@
+#!/bin/sh /etc/rc.common
+START=99
+
+restart(){                                                                                                       
+	# sendat 2 "AT+CFUN=1,1"
+	/usr/share/modem/rm520n.sh &
+}
+
+start(){
+    modem_init
+	/usr/share/modem/rm520n.sh &
+        # sleep 25 && /sbin/ifup wan up &
+        # sleep 25 && /sbin/ifup wan6 up &
+}
+
+modem_init(){
+    Modem_Enable=$(uci -q get modem.@ndis[0].enable) || Modem_Enable=1
+    if [ "$Modem_Enable" -eq 0 ]; then
+        echo 1>/sys/class/gpio/cpe-pwr/value
+        echo "Modem_Enable: $Modem_Enable 模块禁用" >> /tmp/rm520n.log
+        exit 0
+    fi
+
+    max_attempts=20
+    interval=6
+    for i in $(seq 1 $max_attempts); do
+        if [ -e "/dev/ttyUSB2" ]; then
+            sendat_command="AT"
+            sendat_result=$(sendat 2 "$sendat_command")
+            if echo "$sendat_result" | grep -q "OK"; then
+                echo "AT命令执行成功" >> /tmp/rm520n.log
+                break
+            fi
+        fi
+
+        if [ $i -lt $max_attempts ]; then
+            echo "第 $i 次检测失败，等待 $interval 秒后继续..." >> /tmp/rm520n.log
+            sleep $interval
+        else
+            echo "达到最大检测次数，未检测到准备就绪" >> /tmp/rm520n.log
+            exit 1
+        fi
+    done
+    rm520n_first
+}
+
+rm520n_first(){
+    if [ -e /etc/config/rm520n_first ];then
+        echo "RM520N File exists All OKay" >> /tmp/rm520n.log
+    else
+        echo "RM520N First Boot" >> /tmp/rm520n.log
+        sendat 2 'at+qcfg="pcie/mode",1' >> /tmp/rm520n.log
+        sendat 2 'at+qcfg="data_interface",1,0' >> /tmp/rm520n.log
+        sendat 2 'at+qeth="eth_driver","r8125",1' >> /tmp/rm520n.log
+        sendat 2 'AT+QMAPWAC=1' >> /tmp/rm520n.log
+        sendat 2 'at+qmap="mpdn_rule",' >> /tmp/rm520n.log
+        sendat 2 'AT' >> /tmp/rm520n.log
+        sendat 2 'at+qmap="mpdn_rule",0,1,0,4,1,"FF:FF:FF:FF:FF:FF"' >> /tmp/rm520n.log
+        sendat 2 'AT' >> /tmp/rm520n.log
+        sendat 2 'AT+QMAP="IPPT_NAT",0' >> /tmp/rm520n.log
+        sendat 2 'AT+CFUN=1,1' >> /tmp/rm520n.log
+        touch /etc/config/rm520n_first
+        echo "RM520N初始化完成" >> /tmp/rm520n.log
+    fi
+}
