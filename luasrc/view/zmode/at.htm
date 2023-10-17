@@ -39,49 +39,21 @@
 <h2><a id="content" name="content"><%:AT命令工具%></a></h2>
 <div class="cbi-map-descr"><%:AT命令工具%></div>
 <head>
-     <style>
-      input {
-        vertical-align: bottom;
-      }
-	  
-	  #popup {
-		width:560px;
-		height:190px;
-		padding:20px;
-		background-color:gainsboro;  
-		border-style : solid;	
-		position:fixed;
-		top : 40%;
-		margin-left: auto;
-		margin-right: auto;
-		left: 0;
-		right: 0;
-		text-align: center;
-		display:none;
-	}
- 	textarea{
-		background:#373737;
-		border:none;
-		color:#FFF;
-	}
-    </style>
+	<style>
+		input {
+			vertical-align: bottom;
+		}
+
+		textarea {
+			background: #373737;
+			border: none;
+			color: #FFF;
+		}
+	</style>
 </head>
 
 <fieldset class="cbi-section" id="cbi-term">
 	<legend><%:AT命令终端%></legend>
-	<div id="popup">
-		<table width="500" border="0">
-			<tr>
-				<td width="50px"><div><%:Enter Password to Unlock Full Terminal%></div></td>
-			</tr>
-			<tr>
-				<td width="200px"><input id="pass" type="password"/></td>
-			</tr>
-			<tr>
-				<td><input type="image" src="<%=showicon(0)%>" style="width:48px;height:48px;" onclick="return done()" /></td>
-			</tr>
-		</table>
-	</div>
 	
 	<table width="700" border="0" id="droptxt">
 	<tr>
@@ -93,7 +65,9 @@
 			</select>
 		</td>
 		<td width="10%"><div align="right"><%:AT命令 : %></div></td>
-		<td width="15%"><input style="visibility:visible;width: 500px;maxlength="200" type="text" name="atcmdlck" id="atcmd" class="cbi-input-text"></input></td>
+		<td width="15%">
+			<input style="visibility:visible; width: 500px;" maxlength="100" type="text" name="atcmdlck" id="atcmd" class="cbi-input-text"></input>
+		</td>
 		<td width="10%">
 			<input style="visibility:visible" type="submit" id="sendat" class="cbi-button cbi-button-apply" value="<%:发送%>" onclick="return sendcmd()" />
 			<input style="visibility:visible" type="submit" id="sendclean" class="cbi-button cbi-button-reset" value="<%:清除%>" onclick="return sendclean()" />
@@ -102,7 +76,7 @@
 	</tr>
 	</table>
 	
-	<textarea readonly="readonly"  name="attxt" id="attxt" rows="50" style="width: 100%;" maxlength="160"></textarea>
+	<textarea readonly="readonly"  name="attxt" id="attxt" rows="40" style="width: 100%;" maxlength="160"></textarea>
 
 </div>
 
