@@ -64,6 +64,16 @@ bandlist_nsa:value("41", translate("BAND 41"))
 bandlist_nsa:value("78", translate("BAND 78"))
 bandlist_nsa:depends("nrmode","2")
 
+earfcn = section:taboption("advanced", Value, "earfcn", translate("频点锁定"))
+earfcn:depends("smode","1")
+earfcn:depends("smode","2")
+earfcn.readonly = true
+
+cellid = section:taboption("advanced", Value, "cellid", translate("小区锁定"))
+cellid:depends("smode","1")
+cellid:depends("smode","2")
+cellid.readonly = true
+
 enable_imei = section:taboption("advanced", Flag, "enable_imei", translate("修改IMEI"))
 enable_imei.default = false
 enable_imei:depends("simsel", "0")

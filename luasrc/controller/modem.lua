@@ -40,101 +40,33 @@ function action_get_csq()
 	stat = "/tmp/cpe_cell.file"
 	file = io.open(stat, "r")
 	local rv ={}
-
-	-- echo 'RM520N-GL'
-	-- echo 'conntype'
-	-- echo '1e0e:9001'
-	-- echo $COPS #运营商
-	-- echo '' #端口
-	-- echo '' #温度
-	-- echo '' #协议 
-    rv["modem"] = file:read("*line")
+	rv["modem"] = file:read("*line")
 	rv["conntype"] = file:read("*line")
+	rv["firmware"] = file:read("*line")
+	rv["temper"] = file:read("*line")
 	rv["date"] = file:read("*line")
-	rv["modid"] = file:read("*line")
+	--------------------------------
 	rv["simsel"] = file:read("*line")
 	rv["cops"] = file:read("*line")
-	rv["port"] = file:read("*line")
-	rv["tempur"] = file:read("*line")
-	rv["proto"] = file:read("*line")
-	file:read("*line")
-
-
-	-- echo $IMEI #imei
-	-- echo $IMSI #imsi
-	-- echo $ICCID #iccid
-	-- echo $phone #phone
 	rv["imei"] = file:read("*line")
 	rv["imsi"] = file:read("*line")
 	rv["iccid"] =file:read("*line")
 	rv["phone"] = file:read("*line")
-	file:read("*line")
-
-
-	-- echo $MODE
-	-- echo $CSQ
-	-- echo $CSQ_PER
-	-- echo $CSQ_RSSI
-	-- echo '' #参考信号接收质量 RSRQ ecio
-	-- echo '' #参考信号接收质量 RSRQ ecio1
-	-- echo '' #参考信号接收功率 RSRP rscp
-	-- echo '' #参考信号接收功率 RSRP rscp1
-	-- echo '' #信噪比 SINR  rv["sinr"]
-	-- echo '' #连接状态监控 rv["netmode"]
+	--------------------------------
 	rv["mode"] = file:read("*line")
-	rv["csq"] = file:read("*line")
 	rv["per"] = file:read("*line")
 	rv["rssi"] = file:read("*line")
-	rv["ecio"] = file:read("*line")
-	rv["ecio1"] = file:read("*line")
+	rv["rsrq"] = file:read("*line")
 	rv["rscp"] = file:read("*line")
-	rv["rscp1"] = file:read("*line")
 	rv["sinr"] = file:read("*line")
-	rv["netmode"] = file:read("*line")
-	file:read("*line")
-	
-	rssi = rv["rssi"]
-	ecio = rv["ecio"]
-	rscp = rv["rscp"]
-	ecio1 = rv["ecio1"]
-	rscp1 = rv["rscp1"]
-	if ecio == nil then
-		ecio = "-"
-	end
-	if ecio1 == nil then
-		ecio1 = "-"
-	end
-	if rscp == nil then
-		rscp = "-"
-	end
-	if rscp1 == nil then
-		rscp1 = "-"
-	end
-
-	if ecio ~= "-" then
-		rv["ecio"] = ecio .. " dB"
-	end
-	if rscp ~= "-" then
-		rv["rscp"] = rscp .. " dBm"
-	end
-	if ecio1 ~= " " then
-		rv["ecio1"] = ecio1 .. " dB"
-	end
-	if rscp1 ~= " " then
-		rv["rscp1"] = rscp1 .." dBm"
-	end
-
+	-------------------------------
 	rv["mcc"] = file:read("*line")
-	rv["mnc"] = file:read("*line")
-    rv["rnc"] = file:read("*line")
-	rv["rncn"] = file:read("*line")
 	rv["lac"] = file:read("*line")
-	rv["lacn"] = file:read("*line")
 	rv["cid"] = file:read("*line")
-	rv["cidn"] = file:read("*line")
-	rv["lband"] = file:read("*line")
-	rv["channel"] = file:read("*line")
+	rv["band"] = file:read("*line")
+	rv["rfcn"] = file:read("*line")
 	rv["pci"] = file:read("*line")
+	--------------------------------
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(rv)
 end

@@ -9,20 +9,20 @@ touch "$LOCK_FILE"
 source /usr/share/modem/Quectel
 
 sim_sel=$(cat /tmp/sim_sel)
-result=""
+SIMCard=""
 
 case $sim_sel in
     0)
-        result="外置SIM卡"
+        SIMCard="外置SIM卡"
         ;;
     1)
-        result="内置SIM1"
+        SIMCard="内置SIM1"
         ;;
     2)
-        result="内置SIM2"
+        SIMCard="内置SIM2"
         ;;
     *)
-        result="SIM状态错误"
+        SIMCard="SIM状态错误"
         ;;
 esac
 
@@ -66,53 +66,51 @@ InitData(){
 
 OutData(){
     {
-    echo `sendat 2 "ATI" | sed -n '3p'|sed 's/\r$//'` #'RM520N-CN'
     echo `sendat 2 "ATI" | sed -n '2p'|sed 's/\r$//'` #'Quectel'
-    echo `date "+%Y-%m-%d %H:%M:%S"`
-    echo ''
-    echo "$result"
-    # echo `sendat 2 AT+COPS? | awk -F': ' '/\:/{print $2}' | cut -d',' -f3 | tr -d '"'` #运营商
-    echo $COPS #运营商
-    echo 'ttyUSB2' #端口
-    echo "WD" #温度
-    echo '协议' #协议 
-    echo '---------------------------------'
-    echo `sendat 2 AT+CGSN | grep -oE '[0-9]+'|sed 's/\r$//'` #imei
-    echo `sendat 2 AT+CIMI | sed -n '2p'|sed 's/\r$//'` #imsi
-    echo `sendat 2 AT+QCCID | awk -F': ' '/\:/{print $2}'|sed 's/\r$//'|sed 's/\r$//'` #iccid
+    echo `sendat 2 "ATI" | sed -n '3p'|sed 's/\r$//'` #'RM520N-CN'
+    echo `sendat 2 "ATI" | sed -n '4p' | cut -d ':' -f2 | tr -d ' '|sed 's/\r$//'` #'RM520NCNAAR03A03M4G
+    echo "$CTEMP" # 设备温度 41°C
+    echo `date "+%Y-%m-%d %H:%M:%S"` # 时间
+    #----------------------------------
+    echo "$SIMCard" # 卡槽
+    echo "$ISP" #运营商
+    echo "$IMEI" #imei
+    echo "$IMSI" #imsi
+    echo `sendat 2 AT+QCCID | awk -F': ' '/\:/{print $2}'|sed 's/\r$//'` #iccid
     echo `sendat 2 AT+CNUM | grep "+CNUM:" | sed 's/.*,"\(.*\)",.*/\1/'|sed 's/\r$//'` #phone
-    echo '---------------------------------'
-
-    # echo `sendat 2 AT+QCSQ | awk -F': ' '/\+QCSQ:/{print $2}' | cut -d',' -f1 | tr -d '"'` #TDD NR5G
-    echo $MODE
-    echo $CSQ # CSQ 
-    echo $CSQ_PER #CSQ_PER
-    echo $CSQ_RSSI
-    echo $ECIO #参考信号接收质量 RSRQ ecio
-    echo $ECIO1 #参考信号接收质量 RSRQ ecio1
-    echo $RSCP #参考信号接收功率 RSRP rscp0
-    echo $RSCP1 #参考信号接收功率 RSRP rscp1
-    echo $SINR #信噪比 SINR  rv["sinr"]
-    echo ""
-    echo '---------------------------------'
-
-
+    #-----------------------------------
+    echo "$MODE" #蜂窝网络类型 NR5G-SA "TDD"
+    echo "$CSQ_PER" #CSQ_PER 信号质量
+    echo "$CSQ_RSSI" #信号强度 RSSI 信号强度
+    echo "$ECIO dB" #接收质量 RSRQ 
+    echo "$RSCP dBm" #接收功率 RSRP
+    echo "$SINR" #信噪比 SINR  rv["sinr"]
+    #-----------------------------------
     echo "$COPS_MCC /$COPS_MNC" #MCC / MNC
-    echo ""
-    echo $RNC
-    echo ""
-    echo $LAC  #TAC 
-    echo ""
-    echo ""
-    echo $CID
-    echo $LBAND
-    echo $CHANNEL
-    echo $PCI
-    # echo `date "+%Y-%m-%d %H:%M:%S"`
+    echo "$LAC"  #位置区编码
+    echo "$CID"  #小区基站编码
+    echo "$LBAND" # 频段 频宽
+    echo "$CHANNEL" # 频点
+    echo "$PCI" #物理小区标识
     } > /tmp/cpe_cell.file
 }
 
 InitData
 Quectel_AT
+ISP=""
+case $COPS in
+    "CHN-CT")
+        ISP="中国电信"
+        ;;
+    "CHN-UNICOM")
+        ISP="中国联通"
+        ;;
+    "CHINA MOBILE")
+        ISP="中国移动"
+        ;;
+    *)
+        ISP="$COPS"
+        ;;
+esac
 OutData
 rm -rf "$LOCK_FILE"
