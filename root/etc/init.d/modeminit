@@ -9,8 +9,8 @@ restart(){
 start(){
     modem_init
 	/usr/share/modem/rm520n.sh &
-        # sleep 25 && /sbin/ifup wan up &
-        # sleep 25 && /sbin/ifup wan6 up &
+    sleep 10 && /sbin/ifup wan up &
+    sleep 10 && /sbin/ifup wan6 up &
 }
 
 modem_init(){

@@ -50,7 +50,7 @@ function action_get_csq()
 	rv["cops"] = file:read("*line")
 	rv["imei"] = file:read("*line")
 	rv["imsi"] = file:read("*line")
-	rv["iccid"] =file:read("*line")
+	rv["iccid"] = file:read("*line")
 	rv["phone"] = file:read("*line")
 	--------------------------------
 	rv["mode"] = file:read("*line")

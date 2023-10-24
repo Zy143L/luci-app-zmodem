@@ -36,6 +36,12 @@ fi
 
 if [ ${Enable_PING} == 1 ];then
     /usr/share/modem/pingCheck.sh &
+else 
+    process=`ps -ef | grep "pingCheck" | grep -v grep | awk '{print $1}'` 
+    if [[ -n "$process" ]]; then
+        kill -9 "$process" >/dev/null 2>&1
+    fi
+    rm -rf /tmp/pingCheck.lock
 fi
 
 if [ ${Enable_IMEI} == 1 ];then

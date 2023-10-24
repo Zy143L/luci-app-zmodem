@@ -89,7 +89,7 @@ modify_imei.validate = function(self, value)
 end
 
 
-s2 = m:section(TypedSection, "ndis", translate("网络探测"), translate("Ping一个指定地址 失败则尝试重启网络 超过尝试次数则会放弃网络重启"))
+s2 = m:section(TypedSection, "ndis", translate("网络检测"), translate("Ping一个指定地址 失败则重启网络接口 多次尝试无效则会退出检测"))
 s2.anonymous = true
 s2.addremove = false
 
@@ -99,11 +99,11 @@ en.rmempty = false
 ipaddress= s2:option(Value, "pingaddr", translate("Ping地址"))
 ipaddress.rmempty=false
 
-an = s2:option(Value, "count", translate("尝试次数"))
+an = s2:option(Value, "count", translate("检测间隔(秒)"))
 an.default = "5"
-an:value("3", "3")
 an:value("5", "5")
 an:value("10", "10")
+an:value("15", "15")
 an.rmempty=false
 
 local apply = luci.http.formvalue("cbi.apply")
