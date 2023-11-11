@@ -49,15 +49,18 @@ rm520n_first(){
         echo "RM520N File exists All OKay" >> /tmp/rm520n.log
     else
         echo "RM520N First Boot" >> /tmp/rm520n.log
-        sendat 2 'at+qcfg="pcie/mode",1' >> /tmp/rm520n.log
-        sendat 2 'at+qcfg="data_interface",1,0' >> /tmp/rm520n.log
-        sendat 2 'at+qeth="eth_driver","r8125",1' >> /tmp/rm520n.log
-        sendat 2 'AT+QMAPWAC=1' >> /tmp/rm520n.log
-        sendat 2 'at+qmap="mpdn_rule",' >> /tmp/rm520n.log
+        sendat 2 'AT+QCFG="pcie/mode",1' >> /tmp/rm520n.log
+        sendat 2 'AT+QCFG="data_interface",1,0' >> /tmp/rm520n.log
+        sendat 2 'AT+QETH="eth_driver","r8125",1' >> /tmp/rm520n.log
+        # sendat 2 'AT+QMAPWAC=1' >> /tmp/rm520n.log
+        sendat 2 'AT+QMAP="mPDN_rule",0' >> /tmp/rm520n.log
+        # sendat 2 'AT' >> /tmp/rm520n.log
+        # sendat 2 'at+qmap="mpdn_rule",0,1,0,4,1,"FF:FF:FF:FF:FF:FF"' >> /tmp/rm520n.log
+        sendat 2 'AT+QMAP="mPDN_rule",0,1,0,1,1,"FF:FF:FF:FF:FF:FF"' >> /tmp/rm520n.log
+        # sendat 2 'AT' >> /tmp/rm520n.log
+        # sendat 2 'AT+QMAP="IPPT_NAT",0' >> /tmp/rm520n.log
+        # sendat 2 'AT+QMAP="auto_connect",0,1' >> /tmp/rm520n.log
         sendat 2 'AT' >> /tmp/rm520n.log
-        sendat 2 'at+qmap="mpdn_rule",0,1,0,4,1,"FF:FF:FF:FF:FF:FF"' >> /tmp/rm520n.log
-        sendat 2 'AT' >> /tmp/rm520n.log
-        sendat 2 'AT+QMAP="IPPT_NAT",0' >> /tmp/rm520n.log
         sendat 2 'AT+CFUN=1,1' >> /tmp/rm520n.log
         touch /etc/config/rm520n_first
         echo "RM520N初始化完成" >> /tmp/rm520n.log
